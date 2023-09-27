@@ -13,6 +13,8 @@ from torchvision.models import ResNet
 import __main__
 from PIL import Image
 from pathlib import Path
+import tkinter as tk
+from tkinter import filedialog
 
 # %matplotlib inline
 
@@ -136,4 +138,11 @@ def predict_external_image(image_name):
     print("The image resembles", predict_image(example_image, loaded_model) + ".")
 
 
-predict_external_image('01.jpg')
+# predict_external_image('01.jpg')
+
+root = tk.Tk()
+root.withdraw()
+file_path = filedialog.askopenfilename()
+print(file_path)
+
+predict_external_image(file_path)
