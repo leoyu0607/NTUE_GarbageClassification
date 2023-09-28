@@ -1,9 +1,12 @@
 # This example requires the 'message_content' intent.
+import Model_Apply
 import os
 import random
 import discord
 import logging
 from discord import channel
+import time
+import datetime
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
@@ -12,14 +15,18 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
+
 @client.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
-    act = discord.Activity(type=discord.ActivityType.watching, name="你們傳的奇怪圖片")
+    localtime = time.strftime("%Y-%m-%d %I:%M:%S %p", time.localtime())
+    print(f'We have logged in as {client.user} at {localtime}')
+    act = discord.CustomActivity("偷偷觀察")
     await client.change_presence(activity=act)
+
 
 @client.event
 async def on_message(message):
+    localtime = time.strftime("%Y-%m-%d %I:%M:%S %p", time.localtime())
     if message.author == client.user:
         return
 
@@ -31,16 +38,18 @@ async def on_message(message):
     else:  # If there is it gets the filename from message.attachments
         split_v1 = str(message.attachments).split("filename='")[1]
         filename = str(split_v1).split("' ")[0]
-        if filename.endswith(".jpg"):
-            await message.attachments[0].save(fp="SaveImage/{}".format(filename))
-            await message.channel.send('Get a jpg file.')
-            print("Get a jpg file.")
+        if filename.endswith('.jpg'):
+            await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
+            await message.channel.send(f'謝謝 {message.author.global_name} 的投喂！')
+            print(f"Get a jpg file at {localtime} from {message.author.global_name}.")
         if filename.endswith(".png"):
             await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
-            await message.channel.send('Get a png file.')
-            print("Get a png file.")
-
-
+            await message.channel.send(f'謝謝 {message.author.global_name} 的投喂！')
+            print(f"Get a png file at {localtime} from {message.author.global_name}.")
+        if filename.endswith(".mp4"):
+            await message.attachments[0].save(fp="E:/SaveVideo/{}".format(filename))
+            await message.channel.send(f'{message.author.global_name} 太...太多了')
+            print(f"Get a mp4 file at {localtime} from {message.author.global_name}.")
 
 
 client.run('TOKEN',log_handler=handler)

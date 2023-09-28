@@ -18,9 +18,9 @@ from tkinter import filedialog
 
 # %matplotlib inline
 
-data_dir = 'C:/Users/leozh/PycharmProjects/NTUE_Garbage_Classification/dataset'
+data_dir = 'dataset/'
 classes = os.listdir(data_dir)
-print(classes)
+# print(classes)
 
 transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
 dataset = ImageFolder(data_dir, transform=transformations)
@@ -110,7 +110,7 @@ class DeviceDataLoader():
 
 
 device = get_default_device()
-print(device)
+print(f'Using {device}.')
 
 
 def predict_image(img, model):
@@ -125,7 +125,7 @@ def predict_image(img, model):
 
 
 setattr(__main__, "ResNet", ResNet)
-model_path = 'C:/Users/leozh/PycharmProjects/NTUE_Garbage_Classification/model.pt'
+model_path = 'model.pt'
 model = torch.load(model_path, map_location='cpu')
 loaded_model = model
 
@@ -140,9 +140,9 @@ def predict_external_image(image_name):
 
 # predict_external_image('01.jpg')
 
-root = tk.Tk()
-root.withdraw()
-file_path = filedialog.askopenfilename()
-print(file_path)
+# root = tk.Tk()
+# root.withdraw()
+# file_path = filedialog.askopenfilename()
+# print(file_path)
 
-predict_external_image(file_path)
+# predict_external_image(file_path)
