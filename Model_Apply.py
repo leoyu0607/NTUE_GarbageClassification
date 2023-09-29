@@ -136,6 +136,8 @@ def predict_external_image(image_name):
     example_image = transformations(image)
     plt.imshow(example_image.permute(1, 2, 0))
     print("The image resembles", predict_image(example_image, loaded_model) + ".")
+    result = predict_image(example_image, loaded_model)
+    return result
 
 
 # predict_external_image('01.jpg')

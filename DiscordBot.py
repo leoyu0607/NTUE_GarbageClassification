@@ -46,6 +46,12 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
+    if message.content.startswith('中秋'):
+        if message.channel.type is discord.ChannelType.private:
+            await message.channel.send('中秋節快樂！接下來一起加油吧OuO')
+        else:
+            return
+
     if str(message.attachments) == "[]":  # Checks if there is an attachment on the message
         return
     else:  # If there is it gets the filename from message.attachments
@@ -53,11 +59,13 @@ async def on_message(message):
         filename = str(split_v1).split("' ")[0]
         if filename.endswith('.jpg'):
             await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
-            await message.channel.send(f'謝謝 {message.author.global_name} 的投喂！')
+            result = Model_Apply.predict_external_image("E:/SaveImage/{}".format(filename))
+            await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
             print(f"Get a jpg file at {localtime} from {message.author.global_name}.")
         if filename.endswith(".png"):
             await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
-            await message.channel.send(f'謝謝 {message.author.global_name} 的投喂！')
+            result = Model_Apply.predict_external_image("E:/SaveImage/{}".format(filename))
+            await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
             print(f"Get a png file at {localtime} from {message.author.global_name}.")
         if filename.endswith(".mp4"):
             await message.attachments[0].save(fp="E:/SaveVideo/{}".format(filename))
@@ -65,4 +73,4 @@ async def on_message(message):
             print(f"Get a mp4 file at {localtime} from {message.author.global_name}.")
 
 
-client.run('TOKEN',log_handler=handler)
+client.run('TOKEN', log_handler=handler)
