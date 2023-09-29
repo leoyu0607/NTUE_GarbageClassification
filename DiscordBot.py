@@ -15,14 +15,15 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
+status = input("機器人動態：")
+print("status set")
+act = discord.CustomActivity(status)
+
 
 @client.event
 async def on_ready():
     localtime = time.strftime("%Y-%m-%d %I:%M:%S %p", time.localtime())
     print(f'We have logged in as {client.user} at {localtime}')
-    status = input("機器人動態：")
-    print("status set")
-    act = discord.CustomActivity(status)
     await client.change_presence(activity=act)
 
 
@@ -38,6 +39,9 @@ async def on_message(message):
             exit()
         else:
             await message.channel.send('閉嘴！')
+
+    if message.content.startswith('$restart'):
+        os.system('DiscordBot.bat')
 
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
