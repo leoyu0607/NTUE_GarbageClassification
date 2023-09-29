@@ -20,7 +20,9 @@ client = discord.Client(intents=intents)
 async def on_ready():
     localtime = time.strftime("%Y-%m-%d %I:%M:%S %p", time.localtime())
     print(f'We have logged in as {client.user} at {localtime}')
-    act = discord.CustomActivity("偷偷觀察")
+    status = input("機器人動態：")
+    print("status set")
+    act = discord.CustomActivity(status)
     await client.change_presence(activity=act)
 
 
@@ -29,6 +31,13 @@ async def on_message(message):
     localtime = time.strftime("%Y-%m-%d %I:%M:%S %p", time.localtime())
     if message.author == client.user:
         return
+
+    if message.content.startswith('$stop'):
+        if message.author.id == 495213806931279873:
+            print(exit)
+            exit()
+        else:
+            await message.channel.send('閉嘴！')
 
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
