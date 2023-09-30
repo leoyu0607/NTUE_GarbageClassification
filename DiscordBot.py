@@ -12,16 +12,11 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
-status = input("機器人動態：")
-print("status set")
-act = discord.CustomActivity(status)
-
 
 @client.event
 async def on_ready():
     localtime = time.strftime("%Y-%m-%d %I:%M:%S %p", time.localtime())
     print(f'We have logged in as {client.user} at {localtime}')
-    await client.change_presence(activity=act)
 
 
 @client.event
@@ -29,6 +24,19 @@ async def on_message(message):
     localtime = time.strftime("%Y-%m-%d %I:%M:%S %p", time.localtime())
     if message.author == client.user:
         return
+
+    if message.content.startswith('$status'):
+        if message.author.id == 495213806931279873 or 445156059099693056:
+            tmp = message.content.split(" ", 8)
+            if len(tmp) == 1:
+                await message.channel.send('nothing be changed')
+            else:
+                status = tmp[1]
+                print(f"status set as {status}")
+                act = discord.CustomActivity(status)
+                await client.change_presence(activity=act)
+        else:
+            await message.channel.send('沒有權限')
 
     if message.channel.type is discord.ChannelType.private:
         print(f" {message.author.global_name} say：{message.content}")
