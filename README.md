@@ -1,1 +1,1 @@
-# NTUE_Garbage_Classification-1
+# 垃圾分類DiscordBot
