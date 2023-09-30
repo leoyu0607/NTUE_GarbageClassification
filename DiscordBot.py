@@ -1,12 +1,9 @@
 # This example requires the 'message_content' intent.
 import Model_Apply
 import os
-import random
 import discord
 import logging
-from discord import channel
 import time
-import datetime
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
@@ -33,15 +30,21 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    if message.channel.type is discord.ChannelType.private:
+        print(f" {message.author.global_name} say：{message.content}")
+
     if message.content.startswith('$stop'):
-        if message.author.id == 495213806931279873:
+        if message.author.id == 495213806931279873 or 445156059099693056:
             print(exit)
             exit()
         else:
-            await message.channel.send('閉嘴！')
+            await message.channel.send('住手！')
 
     if message.content.startswith('$restart'):
-        os.system('DiscordBot.bat')
+        if message.author.id == 495213806931279873 or 445156059099693056:
+            os.system('DiscordBot.bat')
+        else:
+            await message.channel.send('住手！')
 
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
