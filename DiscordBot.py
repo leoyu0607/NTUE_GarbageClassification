@@ -85,4 +85,4 @@ async def on_message(message):
             print(f"Get a jpeg file at {localtime} from {message.author.global_name}.")
 
 
-client.run('MTE1Mzg4NDQ2MTA2MzIxNzE2Mg.GSG11q.mM4togxpPTcip_LKlVsaRp8-Xi1UefU1x5B_cY', log_handler=handler)
+client.run('TOKEN', log_handler=handler)
