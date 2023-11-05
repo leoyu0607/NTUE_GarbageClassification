@@ -62,14 +62,14 @@ class ImageClassificationBase(nn.Module):
             epoch + 1, result['train_loss'], result['val_loss'], result['val_acc']))
 
 
-class ResNet(ImageClassificationBase):
+class DenseNet(ImageClassificationBase):
     def __init__(self):
         super().__init__()
         # Use a pretrained model
-        self.network = models.resnet50(pretrained=True)
+        self.network = models.densenet121(pretrained=True)
         # Replace last layer
-        num_ftrs = self.network.fc.in_features
-        self.network.fc = nn.Linear(num_ftrs, len(dataset.classes))
+        num_ftrs = self.network.classifier.in_features
+        self.network.classifier = nn.Linear(num_ftrs, len(dataset.classes))
 
     def forward(self, xb):
         return torch.sigmoid(self.network(xb))
@@ -124,8 +124,8 @@ def predict_image(img, model):
     return dataset.classes[preds[0].item()]
 
 
-setattr(__main__, "ResNet", ResNet)
-model_path = 'model.pt'
+setattr(__main__, "DenseNet", DenseNet)
+model_path = 'model_v2.1.pt'
 model = torch.load(model_path, map_location='cpu')
 loaded_model = model
 

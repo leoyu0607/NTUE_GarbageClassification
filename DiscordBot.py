@@ -25,6 +25,9 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    if message.channel.type is discord.ChannelType.private:
+        print(f"[{localtime}] {message.author.global_name} say：{message.content}")
+
     if message.content.startswith('$status'):
         if message.author.id == 495213806931279873 or 445156059099693056:
             tmp = message.content.split(" ", 8)
@@ -37,9 +40,6 @@ async def on_message(message):
                 await client.change_presence(activity=act)
         else:
             await message.channel.send('沒有權限')
-
-    if message.channel.type is discord.ChannelType.private:
-        print(f" {message.author.global_name} say：{message.content}")
 
     if message.content.startswith('$stop'):
         if message.author.id == 495213806931279873 or 445156059099693056:
@@ -78,10 +78,11 @@ async def on_message(message):
             result = Model_Apply.predict_external_image("E:/SaveImage/{}".format(filename))
             await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
             print(f"Get a png file at {localtime} from {message.author.global_name}.")
-        if filename.endswith(".mp4"):
-            await message.attachments[0].save(fp="E:/SaveVideo/{}".format(filename))
-            await message.channel.send(f'{message.author.global_name} 太...太多了')
-            print(f"Get a mp4 file at {localtime} from {message.author.global_name}.")
+        if filename.endswith(".jpeg"):
+            await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
+            result = Model_Apply.predict_external_image("E:/SaveImage/{}".format(filename))
+            await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
+            print(f"Get a jpeg file at {localtime} from {message.author.global_name}.")
 
 
-client.run('TOKEN', log_handler=handler)
+client.run('MTE1Mzg4NDQ2MTA2MzIxNzE2Mg.GSG11q.mM4togxpPTcip_LKlVsaRp8-Xi1UefU1x5B_cY', log_handler=handler)
