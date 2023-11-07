@@ -69,18 +69,18 @@ async def on_message(message):
         split_v1 = str(message.attachments).split("filename='")[1]
         filename = str(split_v1).split("' ")[0]
         if filename.endswith('.jpg'):
-            await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
-            result = Model_Apply.predict_external_image("E:/SaveImage/{}".format(filename))
+            await message.attachments[0].save(fp="SaveImage/{}".format(filename))
+            result = Model_Apply.predict_external_image("SaveImage/{}".format(filename))
             await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
             print(f"Get a jpg file at {localtime} from {message.author.global_name}.")
         if filename.endswith(".png"):
-            await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
-            result = Model_Apply.predict_external_image("E:/SaveImage/{}".format(filename))
+            await message.attachments[0].save(fp="SaveImage/{}".format(filename))
+            result = Model_Apply.predict_external_image("SaveImage/{}".format(filename))
             await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
             print(f"Get a png file at {localtime} from {message.author.global_name}.")
         if filename.endswith(".jpeg"):
-            await message.attachments[0].save(fp="E:/SaveImage/{}".format(filename))
-            result = Model_Apply.predict_external_image("E:/SaveImage/{}".format(filename))
+            await message.attachments[0].save(fp="SaveImage/{}".format(filename))
+            result = Model_Apply.predict_external_image("SaveImage/{}".format(filename))
             await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
             print(f"Get a jpeg file at {localtime} from {message.author.global_name}.")
 

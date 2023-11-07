@@ -1,35 +1,19 @@
 import os
-import matplotlib
 import torch
-import torchvision
-from torch.utils.data import random_split
-import torchvision.models as models
-import torch.nn as nn
-import torch.nn.functional as F
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
-import matplotlib.pyplot as plt
-from torchvision.models import ResNet
-import __main__
 from PIL import Image
 from pathlib import Path
-import tkinter as tk
-from tkinter import filedialog
-
-# %matplotlib inline
+import torchvision.models as models
+import torch.nn as nn
+import __main__
+import torch.nn.functional as F
 
 data_dir = 'dataset/'
 classes = os.listdir(data_dir)
-# print(classes)
 
 transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
 dataset = ImageFolder(data_dir, transform=transformations)
-
-
-def show_sample(img, label):
-    print("label:", dataset.classes[label], "Class No:" + str(label) + ")")
-    plt.imshow(img.permute(1, 2, 0))
-
 
 def accuracy(outputs, labels):
     _, preds = torch.max(outputs, dim=1)
@@ -76,7 +60,6 @@ class DenseNet(ImageClassificationBase):
 
 
 # porting gpu/cpu
-
 def get_default_device():
     """Pick GPU if available, else CPU"""
     if torch.cuda.is_available():
@@ -85,28 +68,11 @@ def get_default_device():
         return torch.device('cpu')
 
 
-def to_device(data, device):
+def to_device(data, device_type):
     """Move tensor(s) to chosen device"""
     if isinstance(data, (list, tuple)):
-        return [to_device(x, device) for x in data]
-    return data.to(device, non_blocking=True)
-
-
-class DeviceDataLoader():
-    """Wrap a dataloader to move data to a device"""
-
-    def __init__(self, dl, device):
-        self.dl = dl
-        self.device = device
-
-    def __iter__(self):
-        """Yield a batch of data after moving it to device"""
-        for b in self.dl:
-            yield to_device(b, self.device)
-
-    def __len__(self):
-        """Number of batches"""
-        return len(self.dl)
+        return [to_device(x, device_type) for x in data]
+    return data.to(device_type, non_blocking=True)
 
 
 device = get_default_device()
@@ -126,25 +92,12 @@ def predict_image(img, model):
 
 setattr(__main__, "DenseNet", DenseNet)
 model_path = 'model_v2.1.pt'
-model = torch.load(model_path, map_location='cpu')
-loaded_model = model
+loaded_model = torch.load(model_path, map_location='cpu')
 
 
 def predict_external_image(image_name):
     image = Image.open(Path('./' + image_name))
-
     example_image = transformations(image)
-    plt.imshow(example_image.permute(1, 2, 0))
-    print("The image resembles", predict_image(example_image, loaded_model) + ".")
     result = predict_image(example_image, loaded_model)
+    print("The image resembles", result + ".")
     return result
-
-
-# predict_external_image('01.jpg')
-
-# root = tk.Tk()
-# root.withdraw()
-# file_path = filedialog.askopenfilename()
-# print(file_path)
-
-# predict_external_image(file_path)
