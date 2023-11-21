@@ -1,4 +1,3 @@
-# This example requires the 'message_content' intent.
 import Model_Apply
 import os
 import discord
@@ -11,6 +10,10 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+
+adminID = [495213806931279873, 445156059099693056]
+# 圖片副檔名list
+filename_list = ['.jpg', '.jpeg', 'png']
 
 
 @client.event
@@ -29,7 +32,7 @@ async def on_message(message):
         print(f"[{localtime}] {message.author.global_name} say：{message.content}")
 
     if message.content.startswith('$status'):
-        if message.author.id == 495213806931279873 or 445156059099693056:
+        if message.author.id in adminID:
             tmp = message.content.split(" ", 8)
             if len(tmp) == 1:
                 await message.channel.send('nothing be changed')
@@ -42,14 +45,14 @@ async def on_message(message):
             await message.channel.send('沒有權限')
 
     if message.content.startswith('$stop'):
-        if message.author.id == 495213806931279873 or 445156059099693056:
+        if message.author.id in adminID:
             print(exit)
             exit()
         else:
             await message.channel.send('住手！')
 
     if message.content.startswith('$restart'):
-        if message.author.id == 495213806931279873 or 445156059099693056:
+        if message.author.id in adminID:
             os.system('DiscordBot.bat')
         else:
             await message.channel.send('住手！')
@@ -63,26 +66,23 @@ async def on_message(message):
         else:
             return
 
-    if str(message.attachments) == "[]":  # Checks if there is an attachment on the message
-        return
-    else:  # If there is it gets the filename from message.attachments
-        split_v1 = str(message.attachments).split("filename='")[1]
-        filename = str(split_v1).split("' ")[0]
-        if filename.endswith('.jpg'):
-            await message.attachments[0].save(fp="SaveImage/{}".format(filename))
-            result = Model_Apply.predict_external_image("SaveImage/{}".format(filename))
-            await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
-            print(f"Get a jpg file at {localtime} from {message.author.global_name}.")
-        if filename.endswith(".png"):
-            await message.attachments[0].save(fp="SaveImage/{}".format(filename))
-            result = Model_Apply.predict_external_image("SaveImage/{}".format(filename))
-            await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
-            print(f"Get a png file at {localtime} from {message.author.global_name}.")
-        if filename.endswith(".jpeg"):
-            await message.attachments[0].save(fp="SaveImage/{}".format(filename))
-            result = Model_Apply.predict_external_image("SaveImage/{}".format(filename))
-            await message.channel.send(f'謝謝 {message.author.global_name} 投餵了一個 {result} ！')
-            print(f"Get a jpeg file at {localtime} from {message.author.global_name}.")
+    if message.channel.type is discord.ChannelType.private:
+        if str(message.attachments) == "[]":  # Checks if there is an attachment on the message
+            return
+        else:  # If there is it gets the filename from message.attachments
+            split_v1 = str(message.attachments).split("filename='")[1]
+            filename = str(split_v1).split("' ")[0]
+            for i in range(0, 3):
+                if filename.endswith(filename_list[i]):
+                    await message.attachments[0].save(fp="SaveImage/{}".format(filename))
+                    result = Model_Apply.predict_result("SaveImage/{}".format(filename))
+                    days = Model_Apply.days(result)
+                    await message.channel.send(f'{message.author.global_name} ，這是一個 {result}。')
+                    if days != '不可回收':
+                        await message.channel.send(f'建議在每週 {days} 回收！')
+                    else:
+                        await message.channel.send(f'{days}！')
+                    print(f"Get a {filename_list[i]} file at {localtime} from {message.author.global_name}.")
 
 
 client.run('TOKEN', log_handler=handler)

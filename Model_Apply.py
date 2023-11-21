@@ -1,4 +1,6 @@
 import os
+import random
+
 import torch
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
@@ -11,6 +13,7 @@ import torch.nn.functional as F
 
 data_dir = 'dataset/'
 classes = os.listdir(data_dir)
+classesCH = ['廢電池', '生廚餘', '紙箱', '舊衣物', '玻璃', '金屬', '廢紙', '紙容器', '塑膠瓶罐', '塑膠袋', '鞋子', '一般垃圾']
 
 transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
 dataset = ImageFolder(data_dir, transform=transformations)
@@ -59,6 +62,19 @@ class DenseNet(ImageClassificationBase):
         return torch.sigmoid(self.network(xb))
 
 
+class ResNet(ImageClassificationBase):
+    def __init__(self):
+        super().__init__()
+        # Use a pretrained model
+        self.network = models.resnet50(pretrained=True)
+        # Replace last layer
+        num_ftrs = self.network.fc.in_features
+        self.network.fc = nn.Linear(num_ftrs, len(dataset.classes))
+
+    def forward(self, xb):
+        return torch.sigmoid(self.network(xb))
+
+
 # porting gpu/cpu
 def get_default_device():
     """Pick GPU if available, else CPU"""
@@ -78,7 +94,6 @@ def to_device(data, device_type):
 device = get_default_device()
 print(f'Using {device}.')
 
-
 def predict_image(img, model):
     # Convert to a batch of 1
     xb = to_device(img.unsqueeze(0), device)
@@ -91,13 +106,61 @@ def predict_image(img, model):
 
 
 setattr(__main__, "DenseNet", DenseNet)
-model_path = 'model_v2.1.pt'
-loaded_model = torch.load(model_path, map_location='cpu')
+setattr(__main__,'ResNet',ResNet)
+ResNet50_model = torch.load('ResNet50_model_v2.1.pt', map_location='cpu')
+DenseNet121_model = torch.load('DenseNet121_model_v2.1.pt', map_location='cpu')
+DenseNet201_model = torch.load('DenseNet201_model_v2.1.pt', map_location='cpu')
 
 
-def predict_external_image(image_name):
+# 圖片辨識
+def predict_external_image(image_name, loaded_model):
     image = Image.open(Path('./' + image_name))
     example_image = transformations(image)
     result = predict_image(example_image, loaded_model)
-    print("The image resembles", result + ".")
     return result
+
+
+# 三模型投票
+def vote(model1, model2, model3):
+    if model1 == model2:
+        return model1
+    elif model1 == model3:
+        return model1
+    elif model2 == model3:
+        return model2
+    else:
+        result = random.choice([model1,model2,model3])
+        return result
+
+
+# 辨識結果
+def predict_result(image_name):
+    resnet50 = predict_external_image(image_name, ResNet50_model)
+    densenet121 = predict_external_image(image_name, DenseNet121_model)
+    densenet201 = predict_external_image(image_name, DenseNet201_model)
+    print(f"ResNet50：{resnet50}；DenseNet121：{densenet121}；DenseNet201：{densenet201}")
+    result = vote(resnet50, densenet121, densenet201)
+    print("The image resembles", result + ".")
+    for i in range(0, 12):
+        if classes[i] == result:
+            result = classesCH[i]
+    return result
+
+
+# 可回收日
+def days(result):
+    for i in range(0, 12):
+        if classesCH[i] == result:
+            result = classes[i]
+    solid = ['paper_container', 'glass', 'plastic', 'metal']
+    flat = ['clothes', 'cardboard', 'paper', 'plastic_bag']
+    another = ['battery', 'biological']
+    trash = ['shoes', 'trash']
+    if result in solid:
+        return '二、四、六'
+    elif result in flat:
+        return '一、五'
+    elif result in another:
+        return '一、二、四、五、六'
+    elif result in trash:
+        return '不可回收'
