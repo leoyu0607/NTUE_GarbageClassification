@@ -1,6 +1,5 @@
 import os
 import random
-
 import torch
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
@@ -13,7 +12,6 @@ import torch.nn.functional as F
 
 data_dir = 'dataset/'
 classes = os.listdir(data_dir)
-classesCH = ['廢電池', '生廚餘', '紙箱', '舊衣物', '玻璃', '金屬', '廢紙', '紙容器', '塑膠瓶罐', '塑膠袋', '鞋子', '一般垃圾']
 
 transformations = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
 dataset = ImageFolder(data_dir, transform=transformations)
@@ -141,17 +139,11 @@ def predict_result(image_name):
     print(f"ResNet50：{resnet50}；DenseNet121：{densenet121}；DenseNet201：{densenet201}")
     result = vote(resnet50, densenet121, densenet201)
     print("The image resembles", result + ".")
-    for i in range(0, 12):
-        if classes[i] == result:
-            result = classesCH[i]
     return result
 
 
 # 可回收日
 def days(result):
-    for i in range(0, 12):
-        if classesCH[i] == result:
-            result = classes[i]
     solid = ['paper_container', 'glass', 'plastic', 'metal']
     flat = ['clothes', 'cardboard', 'paper', 'plastic_bag']
     another = ['battery', 'biological']

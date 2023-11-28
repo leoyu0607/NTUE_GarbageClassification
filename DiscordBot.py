@@ -3,6 +3,7 @@ import os
 import discord
 import logging
 import time
+from GarbageClass import garbage
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
@@ -77,7 +78,8 @@ async def on_message(message):
                     await message.attachments[0].save(fp="SaveImage/{}".format(filename))
                     result = Model_Apply.predict_result("SaveImage/{}".format(filename))
                     days = Model_Apply.days(result)
-                    await message.channel.send(f'{message.author.global_name} ，這是一個 {result}。')
+                    gar = garbage[result]
+                    await message.channel.send(f'{message.author.global_name} ，這是一個 {gar}。')
                     if days != '不可回收':
                         await message.channel.send(f'建議在每週 {days} 回收！')
                     else:
