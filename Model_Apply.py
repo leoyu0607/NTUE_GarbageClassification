@@ -105,9 +105,9 @@ def predict_image(img, model):
 
 setattr(__main__, "DenseNet", DenseNet)
 setattr(__main__,'ResNet',ResNet)
-ResNet50_model = torch.load('ResNet50_model_v2.2.pt', map_location='cpu')
-DenseNet121_model = torch.load('DenseNet121_model_v2.2.pt', map_location='cpu')
-DenseNet201_model = torch.load('DenseNet201_model_v2.2.pt', map_location='cpu')
+ResNet50_model = torch.load('ResNet50_model_v2.3.pt', map_location='cpu')
+DenseNet121_model = torch.load('DenseNet121_model_v2.3.pt', map_location='cpu')
+DenseNet201_model = torch.load('DenseNet201_model_v2.3.pt', map_location='cpu')
 
 
 # 圖片辨識

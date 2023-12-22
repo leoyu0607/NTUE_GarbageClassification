@@ -58,15 +58,6 @@ async def on_message(message):
         else:
             await message.channel.send('住手！')
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
-
-    if message.content.startswith('中秋'):
-        if message.channel.type is discord.ChannelType.private:
-            await message.channel.send('中秋節快樂！接下來一起加油吧OuO')
-        else:
-            return
-
     if message.channel.type is discord.ChannelType.private:
         if str(message.attachments) == "[]":  # Checks if there is an attachment on the message
             return
@@ -79,12 +70,12 @@ async def on_message(message):
                     result = Model_Apply.predict_result("SaveImage/{}".format(filename))
                     days = Model_Apply.days(result)
                     gar = garbage[result]
-                    await message.channel.send(f'{message.author.global_name} ，這是一個 {gar}。')
+                    await message.channel.send(f'{message.author.global_name} ，這是 {gar}。')
                     if days != '不可回收':
                         await message.channel.send(f'建議在每週 {days} 回收！')
                     else:
                         await message.channel.send(f'{days}！')
-                    print(f"Get a {filename_list[i]} file at {localtime} from {message.author.global_name}.")
+                    print(f"Get a {filename_list[i]} file at {localtime} from {message.author.global_name}.\n")
 
 
 client.run('TOKEN', log_handler=handler)
